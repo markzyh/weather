@@ -3,10 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import {_getNowWeather} from '@/api/ajax'
+import {_getNowWeather,_getForecastWeather} from '@/api/ajax'
 
 
 Vue.prototype._getNowWeather = _getNowWeather
+Vue.prototype._getForecastWeather = _getForecastWeather
 
 Vue.config.productionTip = false
 

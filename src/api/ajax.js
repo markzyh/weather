@@ -1,4 +1,4 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 
 axios.defaults.baseURL = 'https://free-api.heweather.net/s6/weather'
 axios.defaults.headers = {
@@ -10,7 +10,7 @@ axios.interceptors.request.use(config => {
   // 在发送请求之前做些什么
   let key = `e82fb3f88fdf41898b945fda077cffbc`
   config.url += `&key=${key}`
-  console.log(config)
+  //console.log(config)
   //config.url = `now?location=${area},${city}&key=${key}`
   return config;
 }, error => {
