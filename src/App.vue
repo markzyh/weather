@@ -150,7 +150,8 @@ body{
   text-align: center;
   width: 750px;
   height: 1334px;
-  background-image: url(./assets/weather_bg.jpg);
+  /* background-image: url(./assets/weather_bg.jpg); */
+  background-color: #3a8bcc;
   background-repeat: no-repeat;
   background-size: 100% 100%;
   overflow: hidden;
