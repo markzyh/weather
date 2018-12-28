@@ -17,7 +17,6 @@
       <swiper
         :options="swiperOption"
         ref="mySwiper"
-        @someSwiperEvent="callback"
         class="forecast_list"
       >
         <!-- slides -->
@@ -85,6 +84,7 @@ export default {
         "星期五",
         "星期六"
       ],
+      test:[5,6,7,8,5,3,12],
       swiperOption: {
         slidesPerView: 4
       }
@@ -154,7 +154,8 @@ export default {
         this.lowTemp.push(this.forecastWeather[i].tmp_min);
       }
       this.calwidth();//计算宽度,画布尺寸
-      this.canvas(this.highTemp, "#fcc370", this.c);
+      this.canvas(this.test, "#fcc370", this.c);
+      //this.canvas(this.highTemp, "#fcc370", this.c);
       this.canvas(this.lowTemp, "#137bcf", this.c);
     },
     //当前天气
@@ -269,7 +270,7 @@ export default {
   //width: 1312.5px;
   //height: 200px;
   position: absolute;
-  //border:1px solid #000;
+  border:1px solid #000;
   top: 180px;
 }
 .weather_details {
