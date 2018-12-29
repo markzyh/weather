@@ -3,11 +3,17 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import {_getNowWeather,_getForecastWeather} from '@/api/ajax'
+import { Button, Input } from 'element-ui';
 
+import {_getNowWeather,_getForecastWeather,_getRegion} from '@/api/ajax'
 
+Vue.use(Input);
+Vue.use(Button);
 Vue.prototype._getNowWeather = _getNowWeather
+
 Vue.prototype._getForecastWeather = _getForecastWeather
+
+Vue.prototype._getRegion = _getRegion
 
 Vue.config.productionTip = false
 

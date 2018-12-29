@@ -7,12 +7,17 @@ axios.defaults.headers = {
 
 // 添加请求 拦截器
 axios.interceptors.request.use(config => {
+  //console.log(config.url)
   // 在发送请求之前做些什么
-  let key = `e82fb3f88fdf41898b945fda077cffbc`
-  config.url += `&key=${key}`
-  //console.log(config)
+  if(config.url.indexOf('location') != -1){
+    let key = `e82fb3f88fdf41898b945fda077cffbc`
+    config.url += `&key=${key}`
+    return config;
+  }else{
+    return config
+  }
   //config.url = `now?location=${area},${city}&key=${key}`
-  return config;
+  
 }, error => {
   // 对请求错误做些什么
 
@@ -41,10 +46,15 @@ export function _getNowWeather(area, city) {
 }
 
 export function _getForecastWeather(area, city) {
-    let url = `forecast?location=${area},${city}`
-    return axios.get(url).then(res => {
-      return res
-    })
-  }
+  let url = `forecast?location=${area},${city}`
+  return axios.get(url).then(res => {
+    return res
+  })
+}
 
-
+export function _getRegion(){
+  let url = `https://easy-mock.com/mock/5bc6c497d50e8869d9d12d3e/example/getRegion`
+  return axios.get(url).then(res =>{
+    return res
+  })
+}

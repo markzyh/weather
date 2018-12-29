@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <h1 class="today">{{today}}</h1>
-    <router-link to="/region" tag='h2' class="local_title">{{city}}市-{{area}}区</router-link>
+    <h2 class="local_title">{{city}}市-{{area}}区</h2>
     <h3 class="weather_status">
       {{nowweatherStatus}}
       <span>{{nowWindDir}}</span>
@@ -11,6 +11,9 @@
     <!-- <h5 class="update_time">更新时间:{{updateTime}}</h5> -->
     <div class="weather_forecast">
       <h3 class="forecast_title">未来七天天气预报</h3>
+      <!-- <ul class="">
+        <li></li>
+      </ul>-->
       <swiper
         :options="swiperOption"
         ref="mySwiper"
@@ -72,6 +75,8 @@ export default {
       updateTime: "", //更新时间
       highTemp: [],
       lowTemp: [],
+      max:'',
+      min:'',
       week: [
         "星期日",
         "星期一",
@@ -96,49 +101,50 @@ export default {
     canvas(arr, color, c) {
       c.beginPath();
       //画点
-      arr.forEach((item,index) =>{
+      for (let i = 0; i < arr.length; i++) {
         c.moveTo(
-          this.WIDTH * index + this.PADDING,//每天的起始点加上一半的宽度
-          -item * this.ONE_HEIGHT + this.HEIGHT//高度取反,加上整个画布的高度,为了低温在下,高温在上
+          this.WIDTH * i + this.PADDING,//每天的起始点加上一半的宽度
+          -arr[i] * this.ONE_HEIGHT + this.HEIGHT//高度取反,加上整个画布的高度,为了低温在下,高温在上
         );
         if(!this.flag){//第一次,文字在上
           c.fillStyle = "#333";
           c.fillText(
-            item + "℃",
-            this.WIDTH * index + this.PADDING - 6,//-6px是为了文字居中
-            -item* this.ONE_HEIGHT + this.HEIGHT - this.PADDING / 3
+            arr[i] + "℃",
+            this.WIDTH * i + this.PADDING - 6,//-6px是为了文字居中
+            -arr[i] * this.ONE_HEIGHT + this.HEIGHT - this.PADDING / 3
           ); 
         }else{//之后文字在下
           c.fillStyle = "#333";
           c.fillText(
-            item + "℃",
-            this.WIDTH * index + this.PADDING - 6,
-            -item * this.ONE_HEIGHT + this.HEIGHT + this.PADDING / 2//控制文字在上或者在下
+            arr[i] + "℃",
+            this.WIDTH * i + this.PADDING - 6,
+            -arr[i] * this.ONE_HEIGHT + this.HEIGHT + this.PADDING / 2//控制文字在上或者在下
           );
+          
         }
         c.arc(
-          this.WIDTH * index + this.PADDING,
-          -item * this.ONE_HEIGHT + this.HEIGHT,
+          this.WIDTH * i + this.PADDING,
+          -arr[i] * this.ONE_HEIGHT + this.HEIGHT,
           this.RADIUS,
           0,
           2 * Math.PI,
           true
         );
-      })
+      }
       c.fillStyle = color;
       this.flag = true
       c.fill();
       //划线
-      arr.forEach((item,index) =>{
+      for (let j = 0; j <= arr.length; j++) {
         c.moveTo(
-          this.WIDTH * index + this.PADDING,
-          -(item * this.ONE_HEIGHT) + this.HEIGHT
+          this.WIDTH * j + this.PADDING,
+          -(arr[j] * this.ONE_HEIGHT) + this.HEIGHT
         );
         c.lineTo(
-          this.WIDTH * (index + 1) + this.PADDING,
-          -(arr[index + 1] * this.ONE_HEIGHT) + this.HEIGHT
+          this.WIDTH * (j + 1) + this.PADDING,
+          -(arr[j + 1] * this.ONE_HEIGHT) + this.HEIGHT
         );
-      })
+      }
       c.strokeStyle = color;
       c.stroke();
     },
@@ -150,7 +156,7 @@ export default {
         this.lowTemp.push(this.forecastWeather[i].tmp_min);
       }
       this.calwidth();//计算宽度,画布尺寸
-      this.canvas(this.highTemp, "#fcc370", this.c);
+      this.canvas(this.test, "#fcc370", this.c);
       //this.canvas(this.highTemp, "#fcc370", this.c);
       this.canvas(this.lowTemp, "#137bcf", this.c);
     },
@@ -211,7 +217,7 @@ export default {
         return "0" + num;
       }
     },
-    //计算宽度
+    //计算宽度,获取到一周的温度信息后执行
     calwidth() {
       let clientWidth = document.body.offsetWidth;
       let canvas = document.getElementById("canvas");
@@ -219,14 +225,16 @@ export default {
       let height = 300 * prop;
       let width = clientWidth / 4; //,每天的宽度
       this.WIDTH = width;
-      this.HEIGHT = height / 2 + 16 / prop;//向下偏移的高度,因为坐标与数学坐标是反的
+      this.HEIGHT = height / 2 + 10 / prop;
       this.PADDING = width / 2;
       canvas.setAttribute("width", width * 7);
       canvas.setAttribute("height", height);
       let max = this.bubble(this.highTemp).max
       let min = this.bubble(this.lowTemp).min
+      this.max = max
+      this.min = min
       this.diff = max - min//最高和最低温度差
-      this.ONE_HEIGHT = this.HEIGHT / this.diff / 1.5
+      this.ONE_HEIGHT = this.HEIGHT / this.diff / 1.5 //每一格子的高度
       this.c = canvas.getContext("2d");
     },
     //冒泡排序
@@ -266,7 +274,7 @@ export default {
   //width: 1312.5px;
   //height: 200px;
   position: absolute;
-  //border:1px solid #000;
+  border:1px solid #000;
   top: 180px;
 }
 .weather_details {
@@ -331,8 +339,6 @@ export default {
   margin: 40px 0;
   color: #fff;
   text-transform: uppercase;
-  border-bottom: 1px solid;
-  display: inline-block;
 }
 .weather_status {
   font-size: 30px;
