@@ -14,6 +14,7 @@ axios.interceptors.request.use(config => {
     config.url += `&key=${key}`
     return config;
   }else{
+    debugger
     return config
   }
   //config.url = `now?location=${area},${city}&key=${key}`
@@ -35,26 +36,4 @@ axios.interceptors.response.use(res => {
 });
 
 
-
-
-//export default axios
-export function _getNowWeather(area, city) {
-  let url = `now?location=${area},${city}`
-  return axios.get(url).then(res => {
-    return res
-  })
-}
-
-export function _getForecastWeather(area, city) {
-  let url = `forecast?location=${area},${city}`
-  return axios.get(url).then(res => {
-    return res
-  })
-}
-
-export function _getRegion(){
-  let url = `https://easy-mock.com/mock/5bc6c497d50e8869d9d12d3e/example/getRegion`
-  return axios.get(url).then(res =>{
-    return res
-  })
-}
+export default axios

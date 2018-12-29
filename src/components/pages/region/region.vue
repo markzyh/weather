@@ -3,7 +3,7 @@
     <div v-if="region.length" class="choose_region">
       <h2 class="region_title">地区选择</h2>
       <div class="search">
-        <el-input  placeholder="请输入地址"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
+        <el-input placeholder="请输入地址" v-model="searchRegionVal" @change="searchRegion"></el-input>
       </div>
     </div>
     <loading v-if="!region.length"></loading>
@@ -16,12 +16,30 @@ export default {
   data() {
     return {
       region: [],
-      hotRegion: []
+      hotRegion: [],
+      searchRegionVal: ""
     };
   },
   methods: {
-    searchRegion(){
-
+    searchRegion() {
+      let region = "全国";
+      let key = `OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77`;
+      let keywords = this.searchRegionVal;
+      //https://apis.map.qq.com/ws/place/v1/suggestion/?region=北京&keyword=美食&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77
+      let url = `https://apis.map.qq.com/ws/place/v1/suggestion/?region=${region}&keyword=${keywords}&key=${key}`;
+      if (keywords == "") {
+        return false;
+      } else {
+        this.$axios
+          .get(url, {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          })
+          .then(res => {
+            console.log(res);
+          });
+      }
     },
     //热门地区
     handleHotRegion(arr) {
@@ -39,14 +57,12 @@ export default {
     },
     //获取地区
     getRegion() {
-      let response = this._getRegion();
-      if (response) {
-        response.then(res => {
-          this.region = res.data;
-          this.handleRegion();
-          this.handleHotRegion(this.region);
-        });
-      }
+      let url = `https://easy-mock.com/mock/5bc6c497d50e8869d9d12d3e/example/getRegion`;
+      this.$axios.get(url).then(res => {
+        this.region = res.data;
+        this.handleRegion();
+        this.handleHotRegion(this.region);
+      });
     }
   },
   mounted() {
@@ -54,7 +70,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 .region {
   color: #fff;
 }
@@ -87,6 +103,9 @@ export default {
     color: #333;
     border: 1px solid #999;
   }
+}
+#app {
+  background: #333;
 }
 </style>
 
