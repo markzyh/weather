@@ -213,14 +213,14 @@ export default {
       let height = 300 * prop;
       let width = clientWidth / 4; //,每天的宽度
       this.WIDTH = width;
-      this.HEIGHT = height / 2 + 16 / prop; //向下偏移的高度,因为坐标与数学坐标是反的
+      this.HEIGHT = height // 2 + 16 / prop; //向下偏移的高度,因为坐标与数学坐标是反的
       this.PADDING = width / 2;
       canvas.setAttribute("width", width * 7);
       canvas.setAttribute("height", height);
       let max = this.bubble(this.highTemp).max;
       let min = this.bubble(this.lowTemp).min;
       this.diff = max - min; //最高和最低温度差
-      this.ONE_HEIGHT = this.HEIGHT / this.diff / 1.5;
+      this.ONE_HEIGHT = height / this.diff / 1.8;
       this.c = canvas.getContext("2d");
     },
     //冒泡排序
@@ -262,7 +262,7 @@ export default {
   //height: 200px;
   position: absolute;
   //border:1px solid #000;
-  top: 180px;
+  top: 230px;
 }
 .weather_details {
   color: #333;
@@ -286,7 +286,7 @@ export default {
     margin-bottom: 40px;
   }
   .empty {
-    height: 240px;
+    height: 300px;
     width: 100%;
     //border:1px solid #ff0000
   }
