@@ -256,6 +256,7 @@ export default {
     this.getToday();
     this.getNowWeather(this.area, this.city);
     this.getForecastWeather(this.area, this.city);
+      
   }
 };
 </script>

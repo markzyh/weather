@@ -3,7 +3,15 @@
     <div v-if="region.length" class="choose_region">
       <h2 class="region_title">地区选择</h2>
       <div class="search">
-        <el-input placeholder="请输入地址" v-model="searchRegionVal" @change="searchRegion"></el-input>
+        <!--  <el-input placeholder="请输入地址" v-model="searchRegionVal" @change="searchRegion"></el-input> -->
+        <el-autocomplete
+          class="suggestion_input"
+          v-model="searchRegionVal"
+          :fetch-suggestions="querySearch"
+          :trigger-on-focus="false"
+          value-key="name"
+          placeholder="请输入内容"
+        ></el-autocomplete>
       </div>
     </div>
     <loading v-if="!region.length"></loading>
@@ -12,54 +20,46 @@
 <script>
 import loading from "@/base/loading/loading";
 import jsonp from "jsonp";
+import { resolve } from "q";
 export default {
   components: { loading },
   data() {
     return {
       region: [],
       hotRegion: [],
-      searchRegionVal: ""
+      searchRegionVal: "",
+      suggestion: ""
     };
   },
   methods: {
-    searchRegion() {
-      let region = "全国";
-      let key = `5WWBZ-RQL6P-OWSDP-LE5Y3-RK2CJ-WXBJJ`;
-      let keywords = this.searchRegionVal;
-      let opts = {
-        param:''
-      }
-      //data = JSON.stringify(data)
-      let callback = function() {
-        console.log("hahah");
+    querySearch(queryString, cb) {
+      this.getSuggestion(queryString).then(res => {
+        cb(res);
+      });
+    },
+    createFilter(queryString) {
+      return suggestion => {
+        return suggestion.name;
       };
-      let url = `https://apis.map.qq.com/ws/place/v1/suggestion/?region=${region}&keyword=${keywords}&key=${key}`;
-      if (keywords == "") {
-        return false;
-      } else {
+    },
+    getSuggestion(queryString) {
+      let region = "全国";
+      let ak = `SgI1XE1GyrcclnKtPWCjNOd5RVLMzcFs`;
+      let keywords = queryString;
+      let url = `http://api.map.baidu.com/place/v2/suggestion?query=${keywords}&region=${region}&city_limit=false&output=json&ak=${ak}`;
+      let opts = "";
+      return new Promise((resolve, reject) => {
         jsonp(url, opts, (err, data) => {
           if (!err) {
-            debugger
-            console.log(data);
+            //this.suggestion = data.result;
+            resolve(data.result);
+            //this.querySearch(queryString, cb);
           } else {
-            debugger
-            console.log(err);
+            bebugger;
+            reject(err);
           }
         });
-        /* jsonp(url,data,res =>{
-          console.log(res)
-        }) */
-
-        /* this.$axios
-          .get(url, {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            }
-          })
-          .then(res => {
-            console.log(res);
-          }); */
-      }
+      });
     },
     //热门地区
     handleHotRegion(arr) {
@@ -97,6 +97,15 @@ export default {
 .region_title {
   font-size: 40px;
 }
+.suggestion_input{
+  input{
+    background-color: #fff;
+    width: 400px;
+    height: 60px;
+    line-height: 60px;
+    padding-left: 20px;
+  }
+}
 .search {
   display: flex;
   align-items: center;
@@ -108,11 +117,7 @@ export default {
   input {
     //appearance: none;
     //border: none;
-    background-color: #fff;
-    //width: 400px;
-    height: 60px;
-    line-height: 60px;
-    padding-left: 20px;
+    
   }
   span {
     display: inline-block;
