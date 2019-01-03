@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <h1 class="today">{{today}}</h1>
-    <h2 class="local_title">{{city}}市-{{area}}区</h2>
+    <router-link to="/region" tag="h2" class="local_title">{{city}}市-{{area}}区</router-link>
     <h3 class="weather_status">
       {{nowweatherStatus}}
       <span>{{nowWindDir}}</span>
@@ -11,14 +11,7 @@
     <!-- <h5 class="update_time">更新时间:{{updateTime}}</h5> -->
     <div class="weather_forecast">
       <h3 class="forecast_title">未来七天天气预报</h3>
-      <!-- <ul class="">
-        <li></li>
-      </ul>-->
-      <swiper
-        :options="swiperOption"
-        ref="mySwiper"
-        class="forecast_list"
-      >
+      <swiper :options="swiperOption" ref="mySwiper" class="forecast_list">
         <!-- slides -->
         <swiper-slide
           class="weather_details"
@@ -30,9 +23,9 @@
           <h3 class="day" v-if="index !== 0">{{calWeek(day+index)}}</h3>
           <h4 class="date">{{item.date}}</h4>
           <p class="day_status">{{item.cond_txt_d}}</p>
-          <img :src="condImg(item.cond_code_d)" alt="" class="cond_img">
+          <img :src="condImg(item.cond_code_d)" alt class="cond_img">
           <p class="empty"></p>
-          <img :src="condImg(item.cond_code_n)" alt="" class="cond_img">
+          <img :src="condImg(item.cond_code_n)" alt class="cond_img">
           <p class="night_status">{{item.cond_txt_n}}</p>
           <p class="wind_dir">{{item.wind_dir}}</p>
           <p class="wind_sc">{{item.wind_sc}}级</p>
@@ -55,17 +48,17 @@ export default {
   name: "IndexPage",
   data() {
     return {
-      c: "",//画布实例
-      diff: "",//温差
+      c: "", //画布实例
+      diff: "", //温差
       HEIGHT: "", //画布高度
       ONE_HEIGHT: "", //每一度的高度,等于总高度除以温差
-      WIDTH: "",//每一天的间隔
-      RADIUS: 2,//点的半径
-      PADDING: '',//间隔,等于宽度的一半
+      WIDTH: "", //每一天的间隔
+      RADIUS: 2, //点的半径
+      PADDING: "", //间隔,等于宽度的一半
       today: "", //当天
       city: "上海", //本地市
       area: "宝山", //本地区
-      day:'',//当天星期几的索引
+      day: "", //当天星期几的索引
       nowweather: [], //当前天气信息
       forecastWeather: [], //未来7天信息
       nowweatherStatus: "",
@@ -75,8 +68,6 @@ export default {
       updateTime: "", //更新时间
       highTemp: [],
       lowTemp: [],
-      max:'',
-      min:'',
       week: [
         "星期日",
         "星期一",
@@ -86,7 +77,7 @@ export default {
         "星期五",
         "星期六"
       ],
-      test:[5,6,7,8,5,3,12],
+      test: [5, 6, 7, 8, 5, 3, 12],
       swiperOption: {
         slidesPerView: 4
       }
@@ -94,57 +85,58 @@ export default {
   },
   methods: {
     //天气状况图片
-    condImg(code){
-      return require(`@/assets/icons/${code}.png`)
+    condImg(code) {
+      return require(`@/assets/icons/${code}.png`);
     },
     //温度折线图
     canvas(arr, color, c) {
       c.beginPath();
       //画点
-      for (let i = 0; i < arr.length; i++) {
+      arr.forEach((item, index) => {
         c.moveTo(
-          this.WIDTH * i + this.PADDING,//每天的起始点加上一半的宽度
-          -arr[i] * this.ONE_HEIGHT + this.HEIGHT//高度取反,加上整个画布的高度,为了低温在下,高温在上
+          this.WIDTH * index + this.PADDING, //每天的起始点加上一半的宽度
+          -item * this.ONE_HEIGHT + this.HEIGHT //高度取反,加上整个画布的高度,为了低温在下,高温在上
         );
-        if(!this.flag){//第一次,文字在上
+        if (!this.flag) {
+          //第一次,文字在上
           c.fillStyle = "#333";
           c.fillText(
-            arr[i] + "℃",
-            this.WIDTH * i + this.PADDING - 6,//-6px是为了文字居中
-            -arr[i] * this.ONE_HEIGHT + this.HEIGHT - this.PADDING / 3
-          ); 
-        }else{//之后文字在下
-          c.fillStyle = "#333";
-          c.fillText(
-            arr[i] + "℃",
-            this.WIDTH * i + this.PADDING - 6,
-            -arr[i] * this.ONE_HEIGHT + this.HEIGHT + this.PADDING / 2//控制文字在上或者在下
+            item + "℃",
+            this.WIDTH * index + this.PADDING - 6, //-6px是为了文字居中
+            -item * this.ONE_HEIGHT + this.HEIGHT - this.PADDING / 3
           );
-          
+        } else {
+          //之后文字在下
+          c.fillStyle = "#333";
+          c.fillText(
+            item + "℃",
+            this.WIDTH * index + this.PADDING - 6,
+            -item * this.ONE_HEIGHT + this.HEIGHT + this.PADDING / 2 //控制文字在上或者在下
+          );
         }
         c.arc(
-          this.WIDTH * i + this.PADDING,
-          -arr[i] * this.ONE_HEIGHT + this.HEIGHT,
+          this.WIDTH * index + this.PADDING,
+          -item * this.ONE_HEIGHT + this.HEIGHT,
           this.RADIUS,
           0,
           2 * Math.PI,
           true
         );
-      }
+      });
       c.fillStyle = color;
-      this.flag = true
+      this.flag = true;
       c.fill();
       //划线
-      for (let j = 0; j <= arr.length; j++) {
+      arr.forEach((item, index) => {
         c.moveTo(
-          this.WIDTH * j + this.PADDING,
-          -(arr[j] * this.ONE_HEIGHT) + this.HEIGHT
+          this.WIDTH * index + this.PADDING,
+          -(item * this.ONE_HEIGHT) + this.HEIGHT
         );
         c.lineTo(
-          this.WIDTH * (j + 1) + this.PADDING,
-          -(arr[j + 1] * this.ONE_HEIGHT) + this.HEIGHT
+          this.WIDTH * (index + 1) + this.PADDING,
+          -(arr[index + 1] * this.ONE_HEIGHT) + this.HEIGHT
         );
-      }
+      });
       c.strokeStyle = color;
       c.stroke();
     },
@@ -155,8 +147,8 @@ export default {
         this.highTemp.push(this.forecastWeather[i].tmp_max);
         this.lowTemp.push(this.forecastWeather[i].tmp_min);
       }
-      this.calwidth();//计算宽度,画布尺寸
-      this.canvas(this.test, "#fcc370", this.c);
+      this.calwidth(); //计算宽度,画布尺寸
+      this.canvas(this.highTemp, "#fcc370", this.c);
       //this.canvas(this.highTemp, "#fcc370", this.c);
       this.canvas(this.lowTemp, "#137bcf", this.c);
     },
@@ -173,40 +165,35 @@ export default {
     },
     //未来7天天气
     getForecastWeather(area, city) {
-      let response = this._getForecastWeather(area, city);
-      if (response) {
-        response.then(res => {
-          this.forecastWeather = res.data.HeWeather6[0].daily_forecast;
-          this.handleForecastWeather();
-          console.log(this.forecastWeather);
-        });
-      }
+      let url = `forecast?location=${area},${city}`;
+      this.$axios.get(url).then(res => {
+        this.forecastWeather = res.data.HeWeather6[0].daily_forecast;
+        this.handleForecastWeather();
+        console.log(this.forecastWeather);
+      });
     },
     //当前天气
     getNowWeather(area, city) {
-      let response = this._getNowWeather(area, city);
-      if (response) {
-        response.then(res => {
-          this.nowweather = res.data.HeWeather6[0];
-          console.log(this.nowweather);
-          this.handleNowWeather();
-        });
-      }
+      let url = `now?location=${area},${city}`;
+      this.$axios.get(url).then(res => {
+        this.nowweather = res.data.HeWeather6[0];
+        this.handleNowWeather();
+      });
     },
     //未来显示的星期
-    calWeek(index){
-      let length = this.week.length//7
-      if(index > length - 1){
-        index = index - length
+    calWeek(index) {
+      let length = this.week.length; //7
+      if (index > length - 1) {
+        index = index - length;
       }
-      return this.week[index]
+      return this.week[index];
     },
     getToday() {
       let now = new Date();
       let year = now.getFullYear();
       let month = this.checkTen(now.getMonth() + 1);
       let date = this.checkTen(now.getDate());
-      this.day = now.getDay()
+      this.day = now.getDay();
       let day = this.week[now.getDay()];
       this.today = `${year}-${month}-${date} ${day}`;
     },
@@ -217,7 +204,7 @@ export default {
         return "0" + num;
       }
     },
-    //计算宽度,获取到一周的温度信息后执行
+    //计算宽度
     calwidth() {
       let clientWidth = document.body.offsetWidth;
       let canvas = document.getElementById("canvas");
@@ -225,40 +212,39 @@ export default {
       let height = 300 * prop;
       let width = clientWidth / 4; //,每天的宽度
       this.WIDTH = width;
-      this.HEIGHT = height / 2 + 10 / prop;
+      this.HEIGHT = height // 2 + 16 / prop; //向下偏移的高度,因为坐标与数学坐标是反的
       this.PADDING = width / 2;
       canvas.setAttribute("width", width * 7);
       canvas.setAttribute("height", height);
-      let max = this.bubble(this.highTemp).max
-      let min = this.bubble(this.lowTemp).min
-      this.max = max
-      this.min = min
-      this.diff = max - min//最高和最低温度差
-      this.ONE_HEIGHT = this.HEIGHT / this.diff / 1.5 //每一格子的高度
+      let max = this.bubble(this.highTemp).max;
+      let min = this.bubble(this.lowTemp).min;
+      this.diff = max - min; //最高和最低温度差
+      this.ONE_HEIGHT = height / this.diff / 1.8;
       this.c = canvas.getContext("2d");
     },
     //冒泡排序
     bubble(arr) {
+      let brr = arr.slice()//数组拷贝.因为数组是引用类型,简单赋值只是一个指针
       let instance;
-      for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < arr.length - i; j++) {
-          if (arr[j] > arr[j + 1]) {
-            instance = arr[j];
-            arr[j] = arr[j + 1];
-            arr[j + 1] = instance;
+      for (let i = 0; i < brr.length; i++) {
+        for (let j = 0; j < brr.length - i; j++) {
+          if (parseInt(brr[j]) > parseInt(brr[j + 1])) {
+            instance = brr[j];
+            brr[j] = brr[j + 1];
+            brr[j + 1] = instance;
           }
         }
       }
       return {
-        max: arr[arr.length - 1],
-        min: arr[0]
+        max: brr[arr.length - 1],
+        min: brr[0]
       };
     }
   },
   computed: {
     swiper() {
       return this.$refs.mySwiper.swiper;
-    },
+    }
   },
   mounted() {
     this.getToday();
@@ -274,8 +260,8 @@ export default {
   //width: 1312.5px;
   //height: 200px;
   position: absolute;
-  border:1px solid #000;
-  top: 180px;
+  //border:1px solid #000;
+  top: 230px;
 }
 .weather_details {
   color: #333;
@@ -292,23 +278,23 @@ export default {
   .night_status {
     //margin-top: 350px;
   }
-  .day_status{
+  .day_status {
     margin-top: 40px;
   }
-  .night_status{
+  .night_status {
     margin-bottom: 40px;
   }
-  .empty{
-    height: 240px;
+  .empty {
+    height: 300px;
     width: 100%;
     //border:1px solid #ff0000
   }
 }
-.cond_img{
+.cond_img {
   width: 60px;
   height: 60px;
   display: block;
-  margin:0 auto;
+  margin: 0 auto;
 }
 .forecast_title {
   font-size: 40px;
@@ -339,6 +325,8 @@ export default {
   margin: 40px 0;
   color: #fff;
   text-transform: uppercase;
+  border-bottom: 1px solid;
+  display: inline-block;
 }
 .weather_status {
   font-size: 30px;

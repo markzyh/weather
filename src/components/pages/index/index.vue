@@ -55,6 +55,7 @@ export default {
       WIDTH: "", //每一天的间隔
       RADIUS: 2, //点的半径
       PADDING: "", //间隔,等于宽度的一半
+      max: "",
       today: "", //当天
       city: "上海", //本地市
       area: "宝山", //本地区
@@ -90,12 +91,14 @@ export default {
     },
     //温度折线图
     canvas(arr, color, c) {
+      let max = this.max;
+      console.log(max);
       c.beginPath();
       //画点
       arr.forEach((item, index) => {
         c.moveTo(
           this.WIDTH * index + this.PADDING, //每天的起始点加上一半的宽度
-          -item * this.ONE_HEIGHT + this.HEIGHT //高度取反,加上整个画布的高度,为了低温在下,高温在上
+          (max - item + 2) * this.ONE_HEIGHT //高度取反,加上整个画布的高度,为了低温在下,高温在上
         );
         if (!this.flag) {
           //第一次,文字在上
@@ -103,7 +106,8 @@ export default {
           c.fillText(
             item + "℃",
             this.WIDTH * index + this.PADDING - 6, //-6px是为了文字居中
-            -item * this.ONE_HEIGHT + this.HEIGHT - this.PADDING / 3
+            //-item * this.ONE_HEIGHT + this.HEIGHT - this.PADDING / 3
+            (max - item + 2) * this.ONE_HEIGHT - this.PADDING / 5
           );
         } else {
           //之后文字在下
@@ -111,12 +115,13 @@ export default {
           c.fillText(
             item + "℃",
             this.WIDTH * index + this.PADDING - 6,
-            -item * this.ONE_HEIGHT + this.HEIGHT + this.PADDING / 2 //控制文字在上或者在下
+            //-item * this.ONE_HEIGHT + this.HEIGHT + this.PADDING / 2 //控制文字在上或者在下
+            (max - item + 2) * this.ONE_HEIGHT + this.PADDING / 3
           );
         }
         c.arc(
           this.WIDTH * index + this.PADDING,
-          -item * this.ONE_HEIGHT + this.HEIGHT,
+          (max - item + 2) * this.ONE_HEIGHT,
           this.RADIUS,
           0,
           2 * Math.PI,
@@ -130,11 +135,11 @@ export default {
       arr.forEach((item, index) => {
         c.moveTo(
           this.WIDTH * index + this.PADDING,
-          -(item * this.ONE_HEIGHT) + this.HEIGHT
+          (max - item + 2) * this.ONE_HEIGHT
         );
         c.lineTo(
           this.WIDTH * (index + 1) + this.PADDING,
-          -(arr[index + 1] * this.ONE_HEIGHT) + this.HEIGHT
+          (max - arr[index + 1] + 2) * this.ONE_HEIGHT
         );
       });
       c.strokeStyle = color;
@@ -179,7 +184,6 @@ export default {
         this.nowweather = res.data.HeWeather6[0];
         this.handleNowWeather();
       });
-
     },
     //未来显示的星期
     calWeek(index) {
@@ -213,19 +217,20 @@ export default {
       let height = 300 * prop;
       let width = clientWidth / 4; //,每天的宽度
       this.WIDTH = width;
-      this.HEIGHT = height // 2 + 16 / prop; //向下偏移的高度,因为坐标与数学坐标是反的
+      this.HEIGHT = height; // 2 + 16 / prop; //向下偏移的高度,因为坐标与数学坐标是反的
       this.PADDING = width / 2;
       canvas.setAttribute("width", width * 7);
       canvas.setAttribute("height", height);
       let max = this.bubble(this.highTemp).max;
       let min = this.bubble(this.lowTemp).min;
+      this.max = max;
       this.diff = max - min; //最高和最低温度差
-      this.ONE_HEIGHT = height / this.diff / 1.8;
+      this.ONE_HEIGHT = height / (this.diff + 4)
       this.c = canvas.getContext("2d");
     },
     //冒泡排序
     bubble(arr) {
-      let brr = arr.slice()//数组拷贝.因为数组是引用类型,简单赋值只是一个指针
+      let brr = arr.slice(); //数组拷贝.因为数组是引用类型,简单赋值只是一个指针
       let instance;
       for (let i = 0; i < brr.length; i++) {
         for (let j = 0; j < brr.length - i; j++) {

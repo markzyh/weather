@@ -11,6 +11,7 @@
 </template>
 <script>
 import loading from "@/base/loading/loading";
+import jsonp from "jsonp";
 export default {
   components: { loading },
   data() {
@@ -23,14 +24,33 @@ export default {
   methods: {
     searchRegion() {
       let region = "全国";
-      let key = `OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77`;
+      let key = `5WWBZ-RQL6P-OWSDP-LE5Y3-RK2CJ-WXBJJ`;
       let keywords = this.searchRegionVal;
-      //https://apis.map.qq.com/ws/place/v1/suggestion/?region=北京&keyword=美食&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77
+      let opts = {
+        param:''
+      }
+      //data = JSON.stringify(data)
+      let callback = function() {
+        console.log("hahah");
+      };
       let url = `https://apis.map.qq.com/ws/place/v1/suggestion/?region=${region}&keyword=${keywords}&key=${key}`;
       if (keywords == "") {
         return false;
       } else {
-        this.$axios
+        jsonp(url, opts, (err, data) => {
+          if (!err) {
+            debugger
+            console.log(data);
+          } else {
+            debugger
+            console.log(err);
+          }
+        });
+        /* jsonp(url,data,res =>{
+          console.log(res)
+        }) */
+
+        /* this.$axios
           .get(url, {
             headers: {
               "Content-Type": "application/x-www-form-urlencoded"
@@ -38,7 +58,7 @@ export default {
           })
           .then(res => {
             console.log(res);
-          });
+          }); */
       }
     },
     //热门地区

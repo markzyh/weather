@@ -14,7 +14,6 @@ axios.interceptors.request.use(config => {
     config.url += `&key=${key}`
     return config;
   }else{
-    debugger
     return config
   }
   //config.url = `now?location=${area},${city}&key=${key}`
