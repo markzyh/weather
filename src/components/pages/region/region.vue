@@ -6,10 +6,12 @@
         <!--  <el-input placeholder="请输入地址" v-model="searchRegionVal" @change="searchRegion"></el-input> -->
         <el-autocomplete
           class="suggestion_input"
+          size="large"
           v-model="searchRegionVal"
           :fetch-suggestions="querySearch"
           :trigger-on-focus="false"
           value-key="name"
+          select=""
           placeholder="请输入内容"
         ></el-autocomplete>
       </div>
@@ -25,6 +27,7 @@ export default {
   components: { loading },
   data() {
     return {
+      test:true,
       region: [],
       hotRegion: [],
       searchRegionVal: "",
@@ -33,7 +36,9 @@ export default {
   },
   methods: {
     querySearch(queryString, cb) {
+
       this.getSuggestion(queryString).then(res => {
+        console.log(res)
         cb(res);
       });
     },
@@ -50,12 +55,9 @@ export default {
       let opts = "";
       return new Promise((resolve, reject) => {
         jsonp(url, opts, (err, data) => {
-          if (!err) {
-            //this.suggestion = data.result;
+          if (!err) { 
             resolve(data.result);
-            //this.querySearch(queryString, cb);
           } else {
-            bebugger;
             reject(err);
           }
         });
@@ -98,13 +100,12 @@ export default {
   font-size: 40px;
 }
 .suggestion_input{
-  input{
-    background-color: #fff;
-    width: 400px;
-    height: 60px;
-    line-height: 60px;
-    padding-left: 20px;
-  }
+  width: 600px;
+  height: 80px;
+  line-height: 80px;
+}
+.el-input__inner{
+  width: 4000px !important;
 }
 .search {
   display: flex;
@@ -115,8 +116,8 @@ export default {
   height: 40px;
   line-height: 40px;
   input {
-    //appearance: none;
-    //border: none;
+    appearance: none;
+    border: none;
     
   }
   span {
