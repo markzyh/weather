@@ -17,6 +17,7 @@ export default {
       region: [],
       hotRegion: [],
       characters: [
+        "热门",
         "a",
         "b",
         "c",
@@ -43,7 +44,7 @@ export default {
         "x",
         "y",
         "z"
-      ],
+      ]
     };
   },
   methods: {
@@ -62,26 +63,29 @@ export default {
     },
     //获取地区
     getRegion() {
-      //location=a&key=e82fb3f88fdf41898b945fda077cffbc&group=cn  
+      let url,arr = []
+      //location=a&key=e82fb3f88fdf41898b945fda077cffbc&group=cn
       this.characters.forEach((item, index) => {
-        let url = `https://search.heweather.net/find?location=${item}`;
-        this.$axios.get(url).then(res => {
-          this.region.push(res.data.HeWeather6)
+        if (index === 0) {
+          //热门
+          url = `https://search.heweather.net/top?group=cn`;
+        } else {
+          url = `https://search.heweather.net/find?location=${item}`;
+        }
+        let promise = new Promise((resolve, reject) => {
+          this.$axios.get(url).then(res => {
+            let obj = {}
+            obj[item] = res.data.HeWeather6[0].basic
+            resolve(obj)
+          });
         });
+        arr.push(promise)
       });
-/* 
-      url += `location=a`;
-        this.$axios.get(url).then(res => {
-          this.region.push(res.data.HeWeather6)
-          
-        }); */
-      console.log(this.region)
-      //let url = `http://dou.fudayiliao.com/order/region`;
-      /* this.$axios.get(url).then(res => {
-        this.region = res.data;
-        this.handleRegion();
-        this.handleHotRegion(this.region);
-      }); */
+      Promise.all(arr).then(res =>{
+        console.log(res)
+        this.region = res
+        console.log(this.region);
+      })
     }
   },
   mounted() {

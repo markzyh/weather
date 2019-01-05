@@ -9,7 +9,7 @@ axios.defaults.headers = {
 axios.interceptors.request.use(config => {
   //console.log(config.url)
   // 在发送请求之前做些什么
-  if(config.url.indexOf('location') != -1){
+  if(config.url.indexOf('heweather') != -1){
     let key = `e82fb3f88fdf41898b945fda077cffbc`
     config.url += `&key=${key}`
     return config;
