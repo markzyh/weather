@@ -3,7 +3,20 @@
     <div v-if="region.length" class="choose_region">
       <h2 class="region_title">地区选择</h2>
       <search/>
+      
     </div>
+    <div class="region_content">
+        <ul class="region_shortcuts">
+          <li v-for="(item,index) in region" :key="index">{{item.name}}</li>
+        </ul>
+        <div class="region_panel" v-for="(item,index) in region" :key="index">
+          <h3 class="region_tips">{{item.name}}</h3>
+          <ul v-for="(items,index) in item.value" :key="index" class="region_cities">
+            <li>{{items.location}}</li>
+          </ul>
+        </div>
+        
+      </div>
     <loading v-if="!region.length"></loading>
   </div>
 </template>
@@ -63,7 +76,8 @@ export default {
     },
     //获取地区
     getRegion() {
-      let url,arr = []
+      let url,
+        arr = [];
       //location=a&key=e82fb3f88fdf41898b945fda077cffbc&group=cn
       this.characters.forEach((item, index) => {
         if (index === 0) {
@@ -74,18 +88,18 @@ export default {
         }
         let promise = new Promise((resolve, reject) => {
           this.$axios.get(url).then(res => {
-            let obj = {}
-            obj[item] = res.data.HeWeather6[0].basic
-            resolve(obj)
+            let obj = {};
+            obj.name = item;
+            obj.value = res.data.HeWeather6[0].basic;
+            resolve(obj);
           });
         });
-        arr.push(promise)
+        arr.push(promise);
       });
-      Promise.all(arr).then(res =>{
-        console.log(res)
-        this.region = res
+      Promise.all(arr).then(res => {
+        this.region = res;
         console.log(this.region);
-      })
+      });
     }
   },
   mounted() {
@@ -94,6 +108,45 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.region_panel{
+  
+}
+.region_cities{
+li{
+    padding:12px;
+  }
+}
+.region_tips {
+  
+  padding: 10px;
+  background: #ebebeb;
+  text-transform: uppercase;
+}
+.region_content {
+  position: relative;
+  text-align: left;
+  background: #fff;
+  color: #333;
+}
+.region_shortcuts {
+  position: fixed;
+  z-index: 3;
+  border-left: 1px solid #ebebeb;
+  background: #fff;
+  color: #333;
+  height: 100%;;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  li {
+    padding:8px;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+}
 .region {
   color: #fff;
 }

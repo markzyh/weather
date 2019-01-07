@@ -152,9 +152,9 @@ body{
   height: 1334px;
   /* background-image: url(./assets/weather_bg.jpg); */
   background-color: #3a8bcc;
+  border-top: 1px solid #3a8bcc;
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  overflow: hidden;
 }
 .project_title {
   text-align: center;

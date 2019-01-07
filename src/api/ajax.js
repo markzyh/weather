@@ -7,9 +7,9 @@ axios.defaults.headers = {
 
 // 添加请求 拦截器
 axios.interceptors.request.use(config => {
-  //console.log(config.url)
+  //console.log(config.url)search
   // 在发送请求之前做些什么
-  if(config.url.indexOf('heweather') != -1){
+  if(config.url.indexOf('location') != -1 || config.url.indexOf('search') != -1){
     let key = `e82fb3f88fdf41898b945fda077cffbc`
     config.url += `&key=${key}`
     return config;
