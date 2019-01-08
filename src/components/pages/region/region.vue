@@ -3,20 +3,22 @@
     <div v-if="region.length" class="choose_region">
       <h2 class="region_title">地区选择</h2>
       <search/>
-      
     </div>
     <div class="region_content">
-        <ul class="region_shortcuts">
-          <li v-for="(item,index) in region" :key="index">{{item.name}}</li>
-        </ul>
+      <ul class="region_shortcuts" >
+        <li v-for="(item,index) in region" :key="index">{{item.name}}</li>
+      </ul>
+      <div class='all_cities'  ref="all_cities">
+        <div class="all_cities_scroll">
         <div class="region_panel" v-for="(item,index) in region" :key="index">
           <h3 class="region_tips">{{item.name}}</h3>
           <ul v-for="(items,index) in item.value" :key="index" class="region_cities">
             <li>{{items.location}}</li>
           </ul>
         </div>
-        
+        </div>
       </div>
+    </div>
     <loading v-if="!region.length"></loading>
   </div>
 </template>
@@ -74,6 +76,13 @@ export default {
     handleRegion() {
       console.log(this.region);
     },
+    //设置地区的高度
+    calHeight(){
+      setTimeout(() =>{
+          let height = this.$refs.all_cities.scrollHeight
+          
+        },20)
+    },
     //获取地区
     getRegion() {
       let url,
@@ -84,7 +93,7 @@ export default {
           //热门
           url = `https://search.heweather.net/top?group=cn`;
         } else {
-          url = `https://search.heweather.net/find?location=${item}`;
+          url = `https://search.heweather.net/find?location=${item}&number=20&group=cn`;
         }
         let promise = new Promise((resolve, reject) => {
           this.$axios.get(url).then(res => {
@@ -98,6 +107,7 @@ export default {
       });
       Promise.all(arr).then(res => {
         this.region = res;
+        this.calHeight()
         console.log(this.region);
       });
     }
@@ -108,41 +118,48 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-.region_panel{
-  
+.region_panel {
 }
-.region_cities{
-li{
-    padding:12px;
+.region_cities {
+  li {
+    padding: 12px;
   }
 }
 .region_tips {
-  
   padding: 10px;
   background: #ebebeb;
   text-transform: uppercase;
 }
 .region_content {
-  position: relative;
+  width: 100%;
+  height: 100%;
+  position: fixed;
   text-align: left;
   background: #fff;
   color: #333;
+  margin-top: 180px;
+  overflow: hidden;
+}
+.all_cities{
+  overflow: scroll;
+  height: 100%;
+}
+.all_cities_scroll{
+  overflow: scroll;
 }
 .region_shortcuts {
-  position: fixed;
+  position: absolute;
   z-index: 3;
   border-left: 1px solid #ebebeb;
   background: #fff;
   color: #333;
-  height: 100%;;
+  height: 100%;
   right: 0;
   top: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding-top: 10px;
+  text-align: center;
   li {
-    padding:8px;
+    padding: 8px;
     font-size: 22px;
     text-transform: uppercase;
   }
@@ -152,6 +169,12 @@ li{
 }
 .region_title {
   font-size: 40px;
+}
+.choose_region {
+  position: fixed;
+  width: 100%;
+  z-index: 4;
+  top: 30px;
 }
 </style>
 

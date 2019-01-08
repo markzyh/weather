@@ -1,30 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>JSONP实现跨域2</title>
+  <meta charset="UTF-8">
+  <title>9999999999</title>
 </head>
+
 <body>
-    <div id="mydiv">
-        <button id="btn">点击</button>
+  <div style="width:400px;height:600px;border:1px solid #000;position: fixed;top: 0;left: 0;overflow: hidden;" >
+    <div class="" style="overflow: scroll;height:100%;" >
+      <ul class="overflow:scroll" id="test1">
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+        <li>hahaha</li>
+
+      </ul>
     </div>
+  </div>
 </body>
 <script type="text/javascript">
-    function handleResponse(response){
-            console.log(response);
-    }
+    var test1 = document.getElementById('test1')
+    console.log(test1.offsetHeight)
+    console.log(test1.scrollHeight)
 </script>
-<script type="text/javascript">
-    window.onload = function() {
 
-    var oBtn = document.getElementById('btn');
-
-    oBtn.onclick = function() {     
-
-        var script = document.createElement("script");
-        script.src = "http://api.map.baidu.com/place/v2/suggestion?query=%E5%A4%A9%E5%AE%89%E9%97%A8&region=%E5%8C%97%E4%BA%AC&city_limit=true&output=json&ak=SgI1XE1GyrcclnKtPWCjNOd5RVLMzcFs&callback=handleResponse";
-        document.body.insertBefore(script, document.body.firstChild);   
-    };
-};
-</script>
 </html>
