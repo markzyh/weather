@@ -5,17 +5,24 @@
       <search/>
     </div>
     <div class="region_content">
-      <ul class="region_shortcuts" >
-        <li v-for="(item,index) in region" :key="index">{{item.name}}</li>
+      <ul class="region_shortcuts">
+        <li
+          v-for="(item,index) in region"
+          :key="index"
+          @click="chooseCitie(index)"
+          :class="{active:shortcutIndex === index}"
+        >{{item.name}}</li>
+        <!--  <li v-for="(item,index) in region" :key="index" @click="chooseCitie(index)" :class="{active:shortcutIndex === index}"><a :href="'#cities'+index">{{item.name}}</a></li> -->
       </ul>
-      <div class='all_cities'  ref="all_cities">
+      <div class="all_cities" ref="all_cities" @touchmove="ontouchmove">
         <div class="all_cities_scroll">
-        <div class="region_panel" v-for="(item,index) in region" :key="index">
-          <h3 class="region_tips">{{item.name}}</h3>
-          <ul v-for="(items,index) in item.value" :key="index" class="region_cities">
-            <li>{{items.location}}</li>
-          </ul>
-        </div>
+          <!-- <div class="region_panel" v-for="(item,index) in region" :key="index" :id="'cities'+index"> -->
+          <div class="region_panel" v-for="(item,index) in region" :key="index" ref="region_panel">
+            <h3 class="region_tips">{{item.name}}</h3>
+            <ul v-for="(items,index) in item.value" :key="index" class="region_cities">
+              <li>{{items.location}}</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -29,6 +36,12 @@ export default {
   components: { loading, Search },
   data() {
     return {
+      scrollY: -1,
+      heightArray: [],
+      shortcutIndex: 0,
+      WIDTH: 750, //设计稿宽度
+      ONE_HEIGHT: "60", //每个城市的高度
+      TIPS_HEIGHT: "60",
       region: [],
       hotRegion: [],
       characters: [
@@ -62,26 +75,68 @@ export default {
       ]
     };
   },
+/*   watch: {
+    region() {
+      this.calHeight();
+    }
+  }, */
+  /* computed:{
+    scrollTop(){
+      let allcities = this.$refs.all_cities;
+      //console.log(allcities.scrollTop);
+    }
+  }, */
   methods: {
-    //热门地区
-    handleHotRegion(arr) {
-      arr.forEach((item, index) => {
-        if (item.cities.length == 1) {
-          //直辖市
-          this.hotRegion.push(item.name);
+    ontouchend() {
+      for (let i = 0; i < this.heightArray.length; i++) {
+        if (this.scrollY > this.heightArray[i] && this.scrollY < this.heightArray[i+1]) {
+          console.log(i);
+          //return;
         }
-      });
+        /* if(this.scrollY > this.heightArray[0] && this.scrollY < this.heightArray[1]){
+          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        } */
+      }
     },
-    //处理地区,重新排序
-    handleRegion() {
-      console.log(this.region);
+    ontouchmove() {
+      let allcities = this.$refs.all_cities;
+      this.scrollY = allcities.scrollTop;
+      this.ontouchend(this.scrollY)
+      for (let i = 0; i < this.heightArray.length; i++) {
+        if (this.scrollY > this.heightArray[i] && this.scrollY < this.heightArray[i+1]) {
+          this.shortcutIndex = i + 1
+        }
+      }
+      //console.log(this.scrollY)
+
+      //if(this.scrollY)
+    },
+    chooseCitie(index) {
+      this.shortcutIndex = index;
+      let allcities = this.$refs.all_cities;
+      //console.log(allcities);
+      allcities.scrollTop = this.heightArray[index - 1];
+      console.log(this.heightArray[index]);
     },
     //设置地区的高度
-    calHeight(){
-      setTimeout(() =>{
-          let height = this.$refs.all_cities.scrollHeight
-          
-        },20)
+    calHeight() {
+      this.heightArray = []
+      debugger
+      let clientWidth = document.documentElement.clientWidth;
+      let prop = this.WIDTH / clientWidth; //设计稿宽度除以实际宽度,比例
+      this.ONE_HEIGHT = this.ONE_HEIGHT / prop;
+      this.TIPS_HEIGHT = this.TIPS_HEIGHT / prop;
+      setTimeout(() => {
+        let regionPanel = this.$refs.region_panel;
+        let length = regionPanel.length;
+        let height = 0;
+        for (let i = 0; i < length; i++) {
+          let item = regionPanel[i];
+          height += item.clientHeight;
+          this.heightArray.push(height);
+        }
+        console.log(this.heightArray);
+      }, 20);
     },
     //获取地区
     getRegion() {
@@ -107,7 +162,7 @@ export default {
       });
       Promise.all(arr).then(res => {
         this.region = res;
-        this.calHeight()
+        this.calHeight();
         console.log(this.region);
       });
     }
@@ -122,11 +177,15 @@ export default {
 }
 .region_cities {
   li {
-    padding: 12px;
+    height: 60px;
+    line-height: 60px;
+    padding-left: 20px;
   }
 }
 .region_tips {
-  padding: 10px;
+  height: 60px;
+  line-height: 60px;
+  padding-left: 10px;
   background: #ebebeb;
   text-transform: uppercase;
 }
@@ -140,12 +199,14 @@ export default {
   margin-top: 180px;
   overflow: hidden;
 }
-.all_cities{
+.all_cities {
   overflow: scroll;
   height: 100%;
 }
-.all_cities_scroll{
+.all_cities_scroll {
   overflow: scroll;
+  padding-bottom: 300px;
+  box-sizing: content-box;
 }
 .region_shortcuts {
   position: absolute;
@@ -163,9 +224,15 @@ export default {
     font-size: 22px;
     text-transform: uppercase;
   }
+  li.active {
+    padding: 14px 8px;
+    background: #3a8bcc;
+    color: #fff;
+  }
 }
 .region {
   color: #fff;
+  box-sizing: border-box;
 }
 .region_title {
   font-size: 40px;

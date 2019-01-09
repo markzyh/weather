@@ -148,7 +148,7 @@ body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  width: 750px;
+  width: 100%;
   height: 1334px;
   /* background-image: url(./assets/weather_bg.jpg); */
   background-color: #3a8bcc;
