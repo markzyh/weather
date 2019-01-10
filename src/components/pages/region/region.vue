@@ -1,10 +1,11 @@
 <template>
   <div class="region">
     <div v-if="region.length" class="choose_region">
-      <h2 class="region_title">地区选择</h2>
+      <h2 class="region_title">地区选择{{test}}</h2>
       <search/>
     </div>
     <div class="region_content">
+      <h3 class="fixed_region_tips" ref="fixedTips">{{fixedTips}}</h3>
       <ul class="region_shortcuts">
         <li
           v-for="(item,index) in region"
@@ -14,7 +15,7 @@
         >{{item.name}}</li>
         <!--  <li v-for="(item,index) in region" :key="index" @click="chooseCitie(index)" :class="{active:shortcutIndex === index}"><a :href="'#cities'+index">{{item.name}}</a></li> -->
       </ul>
-      <div class="all_cities" ref="all_cities" @touchmove="ontouchmove">
+      <div class="all_cities" ref="all_cities" @touchmove="ontouchmove" @touchend="ontouchend">
         <div class="all_cities_scroll">
           <!-- <div class="region_panel" v-for="(item,index) in region" :key="index" :id="'cities'+index"> -->
           <div class="region_panel" v-for="(item,index) in region" :key="index" ref="region_panel">
@@ -37,6 +38,7 @@ export default {
   data() {
     return {
       scrollY: -1,
+      diffheight:0,
       heightArray: [],
       shortcutIndex: 0,
       WIDTH: 750, //设计稿宽度
@@ -75,41 +77,60 @@ export default {
       ]
     };
   },
-/*   watch: {
-    region() {
-      this.calHeight();
+  computed: {
+    test() {
+      return this.diffheight;
+    },
+    fixedTips() {
+      if (this.region.length > 0) {
+        return this.region[this.shortcutIndex].name;
+      }
     }
-  }, */
-  /* computed:{
-    scrollTop(){
-      let allcities = this.$refs.all_cities;
-      //console.log(allcities.scrollTop);
-    }
-  }, */
+  },
   methods: {
     ontouchend() {
-      for (let i = 0; i < this.heightArray.length; i++) {
-        if (this.scrollY > this.heightArray[i] && this.scrollY < this.heightArray[i+1]) {
-          console.log(i);
-          //return;
+      /* for (let i = 0; i < this.heightArray.length; i++) {
+        if (this.scrollY <= 0) {
+          this.shortcutIndex = 0;
         }
-        /* if(this.scrollY > this.heightArray[0] && this.scrollY < this.heightArray[1]){
-          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        } */
-      }
+        if (
+          this.scrollY > this.heightArray[i] &&
+          this.scrollY < this.heightArray[i + 1]
+        ) {
+          this.shortcutIndex = i + 1;
+        }
+      } */
     },
     ontouchmove() {
       let allcities = this.$refs.all_cities;
-      this.scrollY = allcities.scrollTop;
-      this.ontouchend(this.scrollY)
+      this.scrollY = allcities.scrollTop; //Y轴滚动距离
+      ///console.log(this.scrollY)
+      //滚动距离在数组中的位置,左侧联动右侧
       for (let i = 0; i < this.heightArray.length; i++) {
-        if (this.scrollY > this.heightArray[i] && this.scrollY < this.heightArray[i+1]) {
-          this.shortcutIndex = i + 1
+        if (this.scrollY <= this.heightArray[0]) {
+          this.shortcutIndex = 0;
+        }
+        if (
+          this.scrollY > this.heightArray[i] &&
+          this.scrollY < this.heightArray[i + 1]
+        ) {
+          this.shortcutIndex = i + 1;
+        }
+        if (
+          this.scrollY > this.heightArray[i] - this.TIPS_HEIGHT &&
+          this.scrollY < this.heightArray[i]
+        ) {
+          this.diffheight =
+            parseInt(this.TIPS_HEIGHT) -
+            parseInt(this.heightArray[i] - this.scrollY); // 计算当前高度数组与滚动高度的差
+          let fixedTips = this.$refs.fixedTips;
+          console.log(this.diffheight);
+          fixedTips.style.transform = `translateY(-${this.diffheight}px)`;
+
+          //console.log(height)
         }
       }
-      //console.log(this.scrollY)
-
-      //if(this.scrollY)
+      //固定的tips动画效果
     },
     chooseCitie(index) {
       this.shortcutIndex = index;
@@ -120,8 +141,7 @@ export default {
     },
     //设置地区的高度
     calHeight() {
-      this.heightArray = []
-      debugger
+      this.heightArray = [];
       let clientWidth = document.documentElement.clientWidth;
       let prop = this.WIDTH / clientWidth; //设计稿宽度除以实际宽度,比例
       this.ONE_HEIGHT = this.ONE_HEIGHT / prop;
@@ -188,6 +208,19 @@ export default {
   padding-left: 10px;
   background: #ebebeb;
   text-transform: uppercase;
+}
+
+.fixed_region_tips {
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  padding-left: 10px;
+  background: #ebebeb;
+  text-transform: uppercase;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
 }
 .region_content {
   width: 100%;
