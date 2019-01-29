@@ -116,7 +116,8 @@ export default {
         ) {
           this.shortcutIndex = i + 1;
         }
-        if (
+        /* 动画效果 */
+        /* if (
           this.scrollY > this.heightArray[i] - this.TIPS_HEIGHT &&
           this.scrollY < this.heightArray[i]
         ) {
@@ -128,7 +129,7 @@ export default {
           fixedTips.style.transform = `translateY(-${this.diffheight}px)`;
 
           //console.log(height)
-        }
+        } */
       }
       //固定的tips动画效果
     },

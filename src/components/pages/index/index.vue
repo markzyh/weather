@@ -107,7 +107,7 @@ export default {
             item + "℃",
             this.WIDTH * index + this.PADDING - 6, //-6px是为了文字居中
             //-item * this.ONE_HEIGHT + this.HEIGHT - this.PADDING / 3
-            (max - item + 2) * this.ONE_HEIGHT - this.PADDING / 5
+            (max - item + 2) * this.ONE_HEIGHT - this.PADDING / 6
           );
         } else {
           //之后文字在下
